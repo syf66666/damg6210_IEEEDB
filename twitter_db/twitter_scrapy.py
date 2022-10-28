@@ -6,12 +6,12 @@ import tweepy
 
 from csv_write import csv_write
 from user_info import get_userInfo
-consumer_key = "WXFZl0njFIHtkGe4WtaKJ86zA" #Your API/Consumer key 
-consumer_secret = "gspUqVootUgXIsT054x8CkYte6KbtUpRatz9PaxWYzTc2aWckh" #Your API/Consumer Secret Key
-access_token = "1582856167797276673-ief9RoNBDiTTlty6srFOgXlteNY9vA"    #Your Access token key
-access_token_secret = "1sK5h3ab7oLjZ2nyXNnEoHx124BeAT1LhISGidJGU3hJc" #Your Access token Secret key
+consumer_key = "" #Your API/Consumer key 
+consumer_secret = "" #Your API/Consumer Secret Key
+access_token = ""    #Your Access token key
+access_token_secret = "" #Your Access token Secret key
 
-Bearer_Token = "AAAAAAAAAAAAAAAAAAAAAJlziQEAAAAAMTzJICra4ARrD74ioqrGzhagivQ%3DFQdBuxlHQgDzyFmRPc9zhA6X6pyLXhq4PNCkR1D4MaRIP96D25"
+Bearer_Token = ""
 
 
 tweet_field=["attachments","author_id","context_annotations","created_at","entities","geo","id","in_reply_to_user_id","lang","possibly_sensitive","public_metrics","referenced_tweets","source","text","withheld"]
