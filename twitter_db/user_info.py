@@ -3,12 +3,12 @@ import tweepy
 from csv_write import csv_write
 
 def get_userInfo(author_ids):
-    consumer_key = "" #Your API/Consumer key
-    consumer_secret = "" #Your API/Consumer Secret Key
-    access_token = ""    #Your Access token key
-    access_token_secret = "" #Your Access token Secret key
+    consumer_key = "9HYB8Tv9ljZvseR6WnX3dUEJw" #Your API/Consumer key
+    consumer_secret = "kfzBKpTbPQroRsfQPqDEeIpUPETjoDTy4yQjkXIbsclOw5O91k" #Your API/Consumer Secret Key
+    access_token = "1512114371979141133-OconYOT7bAxSI372vh2YcQepwGtpLM"    #Your Access token key
+    access_token_secret = "MxpR8RI38IHM5HhjcjodbUeQnSnVsjTMMbb4HRHhBu4V4" #Your Access token Secret key
 
-    Bearer_Token = ""
+    Bearer_Token = "AAAAAAAAAAAAAAAAAAAAANUiigEAAAAAqHiFBV6rEvBGaFzV4iS1P7z6tsA%3D9ZjhCmpuGUYWp2IhoGOXk9INisEgWb4eOikxg6Bz9EQnKkRDzx"
     user_field = ["created_at","description","entities","id","location","name","pinned_tweet_id","profile_image_url","protected","url","username","verified","withheld"]
 
 
