@@ -2,6 +2,7 @@ import pymysql
 import pandas as pd
 import time
 import datetime
+import numpy as np
 #We will use connect() to connect to RDS Instance
 #host is the endpoint of your RDS instance
 #user is the username you have given while creating the RDS instance
@@ -91,6 +92,45 @@ CREATE TABLE `hashtag` (
 '''
 cursor.execute(sql2)
 
+
+sql1 = "DROP TABLE IF EXISTS `conference`;"
+cursor.execute(sql1)
+#0 1 2 4 7 8 9 12 14 15 21 26 27
+sql2 = '''
+CREATE TABLE `conference` (
+  `document_title` varchar(255) DEFAULT NULL,
+  `authors` varchar(255) DEFAULT NULL,
+  `author_affiliations` varchar(2555) DEFAULT NULL,
+  `publication_title` varchar(255) DEFAULT NULL,
+  `publication_year` varchar(255) DEFAULT NULL,
+  `start_page` varchar(255) DEFAULT NULL,
+  `end_page` varchar(255) DEFAULT NULL,
+  `pdf_link` varchar(255) DEFAULT NULL,
+  `author_keywords` varchar(255) DEFAULT NULL,
+  `reference_count` varchar(255) DEFAULT NULL,
+  `publisher` varchar(255) DEFAULT NULL,
+  `document_identifier` varchar(255) DEFAULT NULL
+);
+'''
+cursor.execute(sql2)
+
+#0 1 2 4 7 8 9 12 14 15 21 26 27
+conference = pd.read_csv('./paper.csv',index_col=False)
+conference.head()
+for i,row in conference.iterrows():
+    sql = "INSERT INTO twitter.conference VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    if(np.nan in tuple(row)):
+      continue
+    # count=0
+    # for x in tuple(row):
+    #   print(count)
+    #   count+=1
+    # print(tuple(row))
+    # par = [row[0],row[1],row[2],row[4],row[7],row[8],row[9],row[12],row[14],row[15],row[21],row[26],row[27]]
+    cursor.execute(sql, tuple(row))
+    cursor.connection.commit()
+
+
 tweetData = pd.read_csv('./tweets.csv',index_col=False)
 tweetData.head()
 tweet_ids = set()
@@ -161,7 +201,7 @@ for i,row in hashtag.iterrows():
 
 
 # What user posted this tweet?
-tweet_id = ("1587866593886978054",)
+tweet_id = ("1587388946228531200",)
 sql = "SELECT `author_id` FROM `tweets` WHERE `tweet_id`=%s"
 cursor.execute(sql, tuple(tweet_id))
 result = cursor.fetchone()
@@ -174,7 +214,7 @@ print("The user who posted this tweet is named: ", result)
 
 
 # When did the user post this tweet?
-tweet_id = ("1587866593886978054",)
+tweet_id = ("1587388946228531200",)
 sql = "SELECT `author_id` FROM `tweets` WHERE `tweet_id`=%s"
 cursor.execute(sql, tuple(tweet_id))
 result = cursor.fetchone()
@@ -186,7 +226,7 @@ result = cursor.fetchone()
 print("The tweet location is: ", result)
 
 # What tweets have this user posted in the past 24 hours?
-tweet_id = ("1587866593886978054",)
+tweet_id = ("1587388946228531200",)
 sql = "SELECT `author_id`, `created_at` FROM `tweets` WHERE `tweet_id`=%s"
 cursor.execute(sql, tuple(tweet_id))
 result = cursor.fetchone()
@@ -201,7 +241,7 @@ print("The tweets this user posted for last 24 hours are: ", result)
 
 # How many tweets have this user posted in the past 24 hours?
 
-tweet_id = ("1587866593886978054",)
+tweet_id = ("1587388946228531200",)
 sql = "SELECT `author_id`, `created_at` FROM `tweets` WHERE `tweet_id`=%s"
 cursor.execute(sql, tuple(tweet_id))
 result = cursor.fetchone()
@@ -216,7 +256,7 @@ print("The tweets count this user posted for last 24 hours is: ",result[0])
 
 
 # When did this user join Twitter?
-user_id=["1022648566194483201"]
+user_id=["1017942006616780800"]
 sql = "SELECT `created_at` FROM `user_info` WHERE `user_id`=%s"
 cursor.execute(sql, tuple(user_id))
 result = cursor.fetchone()
@@ -261,4 +301,103 @@ print("The most popular tweet is: ", result[0])
 
 
 #Use Cases
+#1. which year has the most publications in computer science
+sql ='''
+SELECT
+publication_year,
+COUNT(publication_year) as pub_count
+FROM
+  conference
+GROUP BY 
+  publication_year
+ORDER BY 
+  `pub_count` DESC
+LIMIT 1;
+'''
+cursor.execute(sql)
+result = cursor.fetchone()
+print("The most popular year is: ", result[0])
+
+
+#2. which publication is the most popular
+sql ='''
+SELECT
+document_title,
+reference_count
+FROM
+  conference
+ORDER BY 
+  reference_count DESC
+LIMIT 1;
+'''
+cursor.execute(sql)
+result = cursor.fetchone()
+print("The most popular publication is: ", result[0])
+
+#3. which topic is the most popular in computer science area
+sql ='''
+SELECT
+author_keywords,
+COUNT(author_keywords) as key_count
+FROM
+  conference
+GROUP BY 
+  author_keywords
+ORDER BY 
+  `key_count` DESC
+LIMIT 1;
+'''
+cursor.execute(sql)
+result = cursor.fetchone()
+print("The most popular topic in computer science area is: ", result[0])
+
+
+#3. which author is researching around data science topic
+sql ='''
+SELECT
+authors
+FROM
+  conference
+WHERE
+  author_keywords LIKE '%data%'
+'''
+cursor.execute(sql)
+result = cursor.fetchone()
+print("The authors who are in data science area are ", result)
+
+
+#4. which affiliation has most publications
+sql ='''
+SELECT
+author_affiliations,
+COUNT(author_affiliations) as pub_count
+FROM
+  conference
+GROUP BY 
+  author_affiliations
+ORDER BY 
+  `pub_count` DESC
+LIMIT 1;
+'''
+cursor.execute(sql)
+result = cursor.fetchone()
+print("The most popular affliation in computer science area is: ", result[0])
+
+# which affiliation has the most authors in computer science area?
+sql ='''
+SELECT
+author_affiliations,
+COUNT(authors) as author_count
+FROM
+  conference
+GROUP BY 
+  author_affiliations
+ORDER BY 
+  `author_count` DESC
+LIMIT 1;
+'''
+cursor.execute(sql)
+result = cursor.fetchone()
+print("The affliation which has the most authors in computer science is ", result[0])
+
 
